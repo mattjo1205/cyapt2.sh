@@ -1,0 +1,219 @@
+#!/bin/bash
+
+# Function to print a message and exit on error
+exit_on_error() {
+  if [ $? -ne 0 ]; then
+    echo "Error: $1"
+    exit 1
+  fi
+}
+
+# Readme
+echo "Reading README..."
+# Replace the following with the actual path to your README file
+cat /path/to/readme.txt > checklist_notes.txt
+
+#Making a backup of all files 
+mkdir /home/backup_files
+
+# Forensics questions
+echo "Completing forensics questions..."
+
+# USER SETTINGS
+# In /etc/passwd
+echo "Checking /etc/passwd..."
+awk -F: '{print $1, $7}' /etc/passwd | while read user shell; do
+  if [ "$shell" != "/bin/false" ] && [ "$shell" != "/bin/nologin" ]; then
+    usermod -s /bin/false $user
+    echo "Changed login shell for user $user to /bin/false"
+  fi
+done
+
+# In /etc/group
+cp /etc/group /home/backup_files    
+echo "Checking /etc/group..."
+gpasswd -d bad_actor admin
+gpasswd -d bad_actor sudo
+# Add any other group checks here
+
+# Sudoers
+echo "Checking sudoers..."
+visudox``
+# Remove any strange exceptions in sudoers.d directory
+
+# /etc/hosts
+echo "Checking /etc/hosts..."
+# Add code to check irregular domains in hosts file
+
+# /etc/Light.dm
+echo "Configuring Light.dm..."
+echo "allow-guest=false" >> /etc/Light.dm 
+
+# /etc/Login.defs
+echo "Configuring /etc/Login.defs..."
+sed -i 's/PASS_MAX_DAYS.*/PASS_MAX_DAYS 90/' /etc/Login.defs
+sed -i 's/PASS_MIN_DAYS.*/PASS_MIN_DAYS 10/' /etc/Login.defs
+sed -i 's/PASS_WARN_AGE.*/PASS_WARN_AGE 7/' /etc/Login.defs
+sed -i 's/MIN_UID.*/MIN_UID 1000/' /etc/Login.defs
+sed -i 's/MAX_UID.*/MAX_UID 6000/' /etc/Login.defs
+sed -i 's/LOG_OK_LOGINS.*/LOG_OK_LOGINS yes/' /etc/Login.defs
+sed -i 's/LOG_UNKFAIL_ENAB.*/LOG_UNKFAIL_ENAB yes/' /etc/Login.defs
+sed -i 's/FAILOG_ENAB.*/FAILOG_ENAB yes/' /etc/Login.defs
+sed -i 's/ENCRYPT_METHOD.*/ENCRYPT_METHOD SHA512/' /etc/Login.defsdefsauth
+
+
+# Ufw
+echo "Configuring UFW..."
+ufw enable
+ufw logging HIGH
+ufw default deny
+# Add code to allow necessary ports
+
+# Check /etc/ufw for bad rules
+
+# Permissions
+echo "Setting permissions..."
+chmod 644 /etc/passwd
+chmod 644 /etc/group
+chmod 600 /etc/shadow
+chmod 440 /etc/sudoers
+chmod 707 /etc/pam.d
+chmod 477 /usr/bin/nano
+# Add code to change TLS keys permissions
+# Add code to check and delete SUID and SGID bits
+
+# Find all suid files
+echo "Finding SUID files..."
+find / -perm +4000
+
+# Find all sgid files
+echo "Finding SGID files..."
+find / -perm +2000
+
+# Find all files writable by everyone
+echo "Finding world-writable files..."
+find / -xdev -type d \( -perm -0002 -a ! -perm -1000 \) -print
+
+# No owner files
+echo "Finding files with no owner..."
+find / -xdev \( -nouser -o -nogroup \) -print
+
+# ssh
+echo "Checking SSH..."
+# Add code to check SSH files and configurations
+
+# Set default umask in /root/.profile
+echo "Setting default umask in /root/.profile..."
+echo "umask 0022" >> /root/.profile
+
+# Set sticky bit on /tmp
+echo "Setting sticky bit on /tmp..."
+chmod 1777 /tmp
+
+# Updates
+echo "Checking for unwanted packages..."
+# Add code to check /etc/apt/sources.list for unwanted packages
+
+
+
+
+# PAM.d
+echo "Installing libpam-cracklib..."
+apt-get install libpam-cracklib
+
+# In /etc/pam.d/common-password
+echo "Configuring common-password..."
+sed -i '/pam.unix.so/s/$/ minlen=12 remember=5/' /etc/pam.d/common-password
+
+#Sysctl configuration 
+
+
+# Add Passwds/Usrs
+echo "Adding passwords and users..."
+# Add code to change passwords and add users
+
+# Unneeded software
+echo "Checking and removing unneeded software..."
+# Add code to check and remove unneeded software
+
+# Sysctl
+echo "Disabling ctrl alt del..."
+systemctl mask ctrl-alt-del.target
+
+# Add code to configure sysctl
+
+# Check startup directories
+echo "Checking startup directories..."
+# Add code to check startup directories
+
+# Rc directories
+# Add code to check rc directories
+
+# /root/.bashrc
+# Add code to check /root/.bashrc
+
+# /etc/ec.local
+# Add code to check /etc/ec.local
+
+# /var/spool/crom/crontabs
+# Add code to check /var/spool/crom/crontabs
+
+# /etc/crontab
+# Add code to check /etc/crontab
+
+# /something/profile
+# Add code to check /something/profile
+
+# /etc/bash.bashrc
+# Add code to check /etc/bash.bashrc
+
+# /etc/inet.d
+# Add code to check /etc/inet.d
+
+# /root
+# Add code to check /root
+
+# crontab-e
+# Add code to check crontab-e
+
+# Firefox
+echo "Configuring Firefox..."
+# Add code to configure Firefox settings
+
+# SSL certificate
+echo "Creating SSL certificate..."
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+
+# SSH
+echo "Configuring SSH..."
+# Add code to configure SSH settings
+
+# FTP
+echo "Configuring FTP..."
+# Add code to configure FTP settings
+
+# Apache2
+echo "Configuring Apache2..."
+# Add code to configure Apache2 settings
+
+# VSFTPD
+echo "Configuring VSFTPD..."
+# Add code to configure VSFTPD settings
+
+# Samba
+echo "Configuring Samba..."
+# Add code to configure Samba settings
+
+# MySQL
+echo "Configuring MySQL..."
+# Add code to configure MySQL settings
+
+# SELinux
+echo "Configuring SELinux..."
+# Add code to configure SELinux settings
+
+# PHP
+echo "Configuring PHP..."
+# Add code to configure PHP settings
+
+echo "Script execution completed successfully."
